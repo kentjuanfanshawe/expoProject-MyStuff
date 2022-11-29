@@ -1,0 +1,47 @@
+{
+    "_delegate": {
+        "_appCheckProvider": {
+            "component": null, 
+            "container": [ComponentContainer], 
+            "instances": [Map], 
+            "instancesDeferred": [Map], 
+            "instancesOptions": [Map], 
+            "name": "app-check-internal",
+            "onInitCallbacks": [Map]}, 
+            "_appId": null, 
+            "_authProvider": {
+                "component": [Component], 
+                "container": [ComponentContainer], 
+                "instances": [Map], 
+                "instancesDeferred": [Map], 
+                "instancesOptions": [Map], 
+                "name": "auth-internal", 
+                "onInitCallbacks": [Map]
+            }, 
+            "_bucket": {
+                "bucket": "mystuff-c6700.appspot.com", 
+                "path_": ""
+            }, 
+            "_deleted": false, 
+            "_firebaseVersion": "9.14.0", 
+            "_host": "firebasestorage.googleapis.com", 
+            "_maxOperationRetryTime": 120000, 
+            "_maxUploadRetryTime": 600000, 
+            "_protocol": "https", 
+            "_requests": Set {}, 
+            "_url": undefined, 
+            "app": {
+                "_automaticDataCollectionEnabled": false, 
+                "_config": [Object], 
+                "_container": [ComponentContainer], 
+                "_isDeleted": false, 
+                "_name": "[DEFAULT]", 
+                "_options": [Object]
+                }
+    }, 
+    "app": {
+        "automaticDataCollectionEnabled": false, 
+        "name": "[DEFAULT]", 
+        "options": [Object]
+    }
+}

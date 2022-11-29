@@ -1,28 +1,49 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet } from "react-native";
 import React from "react";
-import { useNavigation } from "@react-navigation/core";
-import { auth } from "../firebase";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { auth, firestore } from "../firebase";
+
+// import components
+import MyPhotos from "../components/tabs/MyPhotos";
+import MyAudio from "../components/tabs/MyAudio";
+import MyProfile from "../components/tabs/MyProfile";
 
 const HomeScreen = () => {
-  const navigation = useNavigation();
-
-  const handleSignOut = () => {
-    auth
-      .signOut()
-      .then(() => {
-        navigation.replace("Login");
-        console.log("User logged out");
-      })
-      .catch((error) => alert(error.message));
-  };
+  const Tab = createBottomTabNavigator();
 
   return (
-    <View style={styles.container}>
-      <Text>Email: {auth.currentUser?.email}</Text>
-      <TouchableOpacity style={styles.button} onPress={handleSignOut}>
-        <Text style={styles.buttonText}>Sign Out</Text>
-      </TouchableOpacity>
-    </View>
+    // <View style={styles.container}>
+    //   <Text>Email: {auth.currentUser?.email}</Text>
+    //   <TouchableOpacity style={styles.button} onPress={HandleSignOut}>
+    //     <Text style={styles.buttonText}>Sign Out</Text>
+    //   </TouchableOpacity>
+    // </View>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === "My Photos") {
+            iconName = focused ? "images" : "images-outline";
+          } else if (route.name === "My Audio") {
+            iconName = focused ? "musical-notes" : "musical-notes-outline";
+          } else if (route.name === "My Profile") {
+            iconName = focused ? "person-circle" : "person-circle-outline";
+          }
+
+          // You can return any component that you like here!
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: "#0782F9",
+        tabBarInactiveTintColor: "gray",
+        headerShown: false,
+      })}
+    >
+      <Tab.Screen name="My Photos" component={MyPhotos} />
+      <Tab.Screen name="My Audio" component={MyAudio} />
+      <Tab.Screen name="My Profile" component={MyProfile} />
+    </Tab.Navigator>
   );
 };
 

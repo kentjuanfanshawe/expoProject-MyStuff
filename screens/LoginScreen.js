@@ -1,5 +1,7 @@
 import {
+  Alert,
   KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -33,7 +35,9 @@ const LoginScreen = () => {
         const user = userCredentials.user;
         console.log("Registered in with: ", user.email);
       })
-      .catch((error) => alert(error.message));
+      .catch((error) => {
+        Alert.alert(error.message);
+      });
   };
 
   const handleLogin = () => {
@@ -43,10 +47,20 @@ const LoginScreen = () => {
         const user = userCredentials.user;
         console.log("Logged in with: ", user.email);
       })
-      .catch((error) => alert(error.message));
+      .catch((error) => {
+        if (error.code === "auth/wrong-password") {
+          console.log(error);
+          Alert.alert("Your password is incorrect. Please try again");
+        } else {
+          Alert.alert(error.message);
+        }
+      });
   };
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding">
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Email"
