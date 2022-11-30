@@ -23,7 +23,9 @@ const MyProfile = () => {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
+  const [imageFromStorage, setImageFromStorage] = useState(null);
   const [hasUserProfile, setHasUserProfile] = useState(false);
+  const [hasImage, setHasImage] = useState(false);
 
   let userId = auth.currentUser?.uid;
 
@@ -66,7 +68,7 @@ const MyProfile = () => {
   };
 
   const saveProfile = async () => {
-    const imageUrl = await uploadImage();
+    const imageUrl = await uploadImageChecker();
 
     // Save data to Firestore
     firestore
@@ -88,7 +90,7 @@ const MyProfile = () => {
   };
 
   const updateProfile = async () => {
-    const imageUrl = await uploadImage();
+    const imageUrl = await uploadImageChecker();
 
     // Save data to Firestore
     firestore
@@ -120,7 +122,10 @@ const MyProfile = () => {
           setHasUserProfile(true);
           setName(doc.data().name);
           setAge(doc.data().age.toString());
-          setSelectedImage(doc.data().image);
+          setSelectedImage(doc.data().image !== null ? doc.data().image : null);
+          setImageFromStorage(
+            doc.data().image !== null ? doc.data().image : null
+          );
         } else {
           // doc.data() will be undefined in this case
           setHasUserProfile(false);
@@ -141,22 +146,46 @@ const MyProfile = () => {
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
       console.log(result.assets[0].uri, selectedImage);
+      setHasImage(true);
     } else {
       Alert.alert("You did not select any image");
+      console.log(selectedImage);
     }
+  };
+
+  const imageChecker = async () => {
+    if (!selectedImage) {
+      setHasImage(false);
+      pickImage();
+    } else {
+      Alert.alert("Set Photo", "Do you want to change your profile picture?", [
+        { text: "Okay", onPress: pickImage },
+        {
+          text: "Cancel",
+          onPress: () => console.log("Pressed cancel"),
+          style: "cancel",
+        },
+      ]);
+    }
+  };
+
+  const uploadImageChecker = async () => {
+    if (selectedImage === imageFromStorage) return imageFromStorage;
+
+    return await uploadImage();
   };
 
   const uploadImage = async () => {
     let uri = selectedImage;
-    let fileName = uri.split("/").pop();
 
     const uploadUri = Platform.OS === "ios" ? uri.replace("file://", "") : uri;
-
     const response = await fetch(uploadUri);
     const blob = await response.blob();
 
+    let fileName = uri.split("/").pop();
     const extension = fileName.split(".").pop();
     const name = fileName.split(".").slice(0, -1).join(".");
+
     fileName = name + "." + extension;
 
     const storageRef = storage.ref(`photos/${fileName}`);
@@ -164,10 +193,7 @@ const MyProfile = () => {
 
     try {
       await task;
-
-      const url = await storageRef.getDownloadURL();
-
-      return url;
+      return await storageRef.getDownloadURL();
     } catch (error) {
       console.log(error);
       return null;
@@ -180,7 +206,7 @@ const MyProfile = () => {
       <ImageViewer
         placeholderImageSource={PlaceholderImage}
         selectedImage={selectedImage}
-        onPress={pickImage}
+        onPress={imageChecker}
       />
       <Text>Name</Text>
       <TextInput
@@ -235,8 +261,9 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "black",
+    borderColor: "#ccc",
     borderRadius: 5,
     marginVertical: 10,
+    textAlign: "center",
   },
 });
