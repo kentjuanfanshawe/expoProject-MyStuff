@@ -5,11 +5,14 @@ import {
   Alert,
   TextInput,
   Platform,
+  TouchableHighlight,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { auth, firestore, storage } from "../../firebase";
 import { useNavigation } from "@react-navigation/core";
 import * as ImagePicker from "expo-image-picker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 // components
 import Button from "../buttons/Button";
@@ -22,6 +25,8 @@ const PlaceholderImage = require("../../assets/blank-profile.png");
 const MyProfile = () => {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
+  const [date, setDate] = useState(new Date(1598051730000));
+  const [show, setShow] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageFromStorage, setImageFromStorage] = useState(null);
   const [hasUserProfile, setHasUserProfile] = useState(false);
@@ -41,6 +46,12 @@ const MyProfile = () => {
 
   const ageHandler = (value) => {
     setAge(value);
+  };
+
+  const onChangeDate = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    setShow(false);
+    setDate(currentDate);
   };
 
   const handleSignOut = () => {
@@ -78,6 +89,7 @@ const MyProfile = () => {
         name: name,
         age: parseInt(age),
         image: imageUrl,
+        birthdate: date.toDateString(),
       })
       .then(() => {
         Alert.alert("Profile saved!");
@@ -100,6 +112,7 @@ const MyProfile = () => {
         name: name,
         age: parseInt(age),
         image: imageUrl,
+        birthdate: date.toDateString(),
       })
       .then(() => {
         Alert.alert("Profile updated!");
@@ -122,10 +135,9 @@ const MyProfile = () => {
           setHasUserProfile(true);
           setName(doc.data().name);
           setAge(doc.data().age.toString());
-          setSelectedImage(doc.data().image !== null ? doc.data().image : null);
-          setImageFromStorage(
-            doc.data().image !== null ? doc.data().image : null
-          );
+          setSelectedImage(doc.data().image);
+          setImageFromStorage(doc.data().image);
+          setDate(new Date(doc.data().birthdate));
         } else {
           // doc.data() will be undefined in this case
           setHasUserProfile(false);
@@ -222,6 +234,19 @@ const MyProfile = () => {
         value={age}
         placeholder="age"
       />
+      <Text>Birthday</Text>
+      <TouchableOpacity onPress={() => setShow(true)}>
+        <Text style={styles.input}>{date.toDateString()}</Text>
+      </TouchableOpacity>
+      {show && (
+        <DateTimePicker
+          value={date}
+          mode="date"
+          onChange={onChangeDate}
+          minimumDate={new Date(1950, 12, 31)}
+          maximumDate={new Date(2004, 0, 1)}
+        />
+      )}
       {!hasUserProfile && <Button onPress={saveProfile} label="Save" />}
       {hasUserProfile && <Button onPress={updateProfile} label="Update" />}
       <Button onPress={promptSignOut} label="Sign Out" />
