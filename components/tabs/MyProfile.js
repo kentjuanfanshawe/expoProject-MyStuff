@@ -5,7 +5,6 @@ import {
   Alert,
   TextInput,
   Platform,
-  TouchableHighlight,
   TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
@@ -16,7 +15,6 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 
 // components
 import Button from "../buttons/Button";
-import CircleButton from "../buttons/CircleButton";
 import Header from "../texts/Header";
 import ImageViewer from "../images/ImageViewer";
 
@@ -30,7 +28,6 @@ const MyProfile = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageFromStorage, setImageFromStorage] = useState(null);
   const [hasUserProfile, setHasUserProfile] = useState(false);
-  const [hasImage, setHasImage] = useState(false);
 
   let userId = auth.currentUser?.uid;
 
@@ -158,7 +155,6 @@ const MyProfile = () => {
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
       console.log(result.assets[0].uri, selectedImage);
-      setHasImage(true);
     } else {
       Alert.alert("You did not select any image");
       console.log(selectedImage);
@@ -167,7 +163,6 @@ const MyProfile = () => {
 
   const imageChecker = async () => {
     if (!selectedImage) {
-      setHasImage(false);
       pickImage();
     } else {
       Alert.alert("Set Photo", "Do you want to change your profile picture?", [
@@ -250,13 +245,6 @@ const MyProfile = () => {
       {!hasUserProfile && <Button onPress={saveProfile} label="Save" />}
       {hasUserProfile && <Button onPress={updateProfile} label="Update" />}
       <Button onPress={promptSignOut} label="Sign Out" />
-      {/* <CircleButton
-        name="add"
-        onPress={() => alert("pressed add button")}
-        size={30}
-        color="#0782F9"
-        style={styles.add}
-      /> */}
     </View>
   );
 };
@@ -267,7 +255,7 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 40,
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "space-around",
     alignItems: "center",
     backgroundColor: "#ddd",
   },

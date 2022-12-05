@@ -5,7 +5,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { auth, firestore } from "../firebase";
 
 // import components
-import MyPhotos from "../components/tabs/MyPhotos";
+import MyNotes from "../components/tabs/MyNotes";
 import MyAudio from "../components/tabs/MyAudio";
 import MyProfile from "../components/tabs/MyProfile";
 
@@ -24,8 +24,8 @@ const HomeScreen = () => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === "My Photos") {
-            iconName = focused ? "images" : "images-outline";
+          if (route.name === "My Notes") {
+            iconName = focused ? "document" : "document-outline";
           } else if (route.name === "My Audio") {
             iconName = focused ? "musical-notes" : "musical-notes-outline";
           } else if (route.name === "My Profile") {
@@ -40,7 +40,7 @@ const HomeScreen = () => {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="My Photos" component={MyPhotos} />
+      <Tab.Screen name="My Notes" component={MyNotes} />
       <Tab.Screen name="My Audio" component={MyAudio} />
       <Tab.Screen name="My Profile" component={MyProfile} />
     </Tab.Navigator>

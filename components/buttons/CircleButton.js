@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   circleShadow: {
     borderRadius: 30,
     backgroundColor: "transparent",
-    shadowColor: "#000",
+    shadowColor: "#ddd",
     shadowOffset: {
       width: 0,
       height: 1,

@@ -13,8 +13,8 @@ export default Header;
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 36,
-    fontWeight: "900",
+    fontSize: 24,
+    fontWeight: "bold",
     color: "#090c02",
   },
 });
