@@ -1,7 +1,8 @@
 import { StyleSheet, Modal, View, Alert } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { auth, firestore } from "../../firebase";
+import { query, where, collection, getDocs } from "firebase/firestore";
 
 // components
 import Header from "../texts/Header";
@@ -16,7 +17,27 @@ const MyNotes = () => {
 
   let userId = auth.currentUser?.uid;
 
-  useEffect(() => {}, []);
+  const loadNoteList = async () => {
+    const noteRef = query(
+      collection(firestore, "users", userId, "notes"),
+      where("userId", "==", userId)
+    );
+
+    try {
+      const querySnapshot = await getDocs(noteRef);
+      console.log(querySnapshot);
+
+      let noteArray = [];
+      querySnapshot.forEach((doc) => {
+        let item = doc.data();
+        item.id = doc.id;
+        noteArray.push(item);
+      });
+      console.log(...noteArray);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const saveNote = async () => {
     let noteToSave = {
@@ -62,6 +83,7 @@ const MyNotes = () => {
               color={"#090c02"}
               onPress={() => {
                 setModalVisible(true);
+                loadNoteList();
               }}
             />
           </View>
