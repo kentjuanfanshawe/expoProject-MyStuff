@@ -13,12 +13,6 @@ const HomeScreen = () => {
   const Tab = createBottomTabNavigator();
 
   return (
-    // <View style={styles.container}>
-    //   <Text>Email: {auth.currentUser?.email}</Text>
-    //   <TouchableOpacity style={styles.button} onPress={HandleSignOut}>
-    //     <Text style={styles.buttonText}>Sign Out</Text>
-    //   </TouchableOpacity>
-    // </View>
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {

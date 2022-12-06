@@ -242,9 +242,13 @@ const MyProfile = () => {
           maximumDate={new Date(2004, 0, 1)}
         />
       )}
-      {!hasUserProfile && <Button onPress={saveProfile} label="Save" />}
-      {hasUserProfile && <Button onPress={updateProfile} label="Update" />}
-      <Button onPress={promptSignOut} label="Sign Out" />
+      {!hasUserProfile && (
+        <Button onPress={saveProfile} label="Save" width={"50%"} />
+      )}
+      {hasUserProfile && (
+        <Button onPress={updateProfile} label="Update" width={"50%"} />
+      )}
+      <Button onPress={promptSignOut} label="Sign Out" width={"50%"} />
     </View>
   );
 };

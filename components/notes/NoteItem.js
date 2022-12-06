@@ -13,6 +13,8 @@ const NoteItem = (props) => {
   );
 };
 
+export default NoteItem;
+
 const styles = StyleSheet.create({
   item: {
     alignContent: "center",
@@ -47,5 +49,3 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 });
-
-export default NoteItem;

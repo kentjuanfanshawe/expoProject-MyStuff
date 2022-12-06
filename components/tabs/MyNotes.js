@@ -1,23 +1,70 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import { StyleSheet, Modal, View, Alert } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import React, { useState, useEffect } from "react";
+import { auth, firestore } from "../../firebase";
 
 // components
 import Header from "../texts/Header";
 import NoteItem from "../notes/NoteItem";
 import CircleButton from "../buttons/CircleButton";
-import { ScrollView } from "react-native-gesture-handler";
+import NoteModal from "../NoteModal";
 
 const MyNotes = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [noteItem, setNoteItem] = useState("");
+  const [notes, setNotes] = useState([]);
+
+  let userId = auth.currentUser?.uid;
+
+  useEffect(() => {}, []);
+
+  const saveNote = async () => {
+    let noteToSave = {
+      text: noteItem,
+      completed: false,
+      userId: userId,
+    };
+
+    const docRef = firestore
+      .collection("users")
+      .doc(userId)
+      .collection("notes")
+      .add(noteToSave, { merge: true });
+
+    try {
+      await docRef;
+      Alert.alert("Note saved!");
+      // copy generated document id for noteItem
+      noteToSave.id = docRef.id;
+
+      let updatedNotes = [...notes];
+      updatedNotes.push({ text: noteItem, completed: false, userId: userId });
+
+      // clear modal
+      setNotes(updatedNotes);
+      setModalVisible(!modalVisible);
+      setNoteItem("");
+    } catch (err) {
+      Alert.alert("Error in saving your note");
+      console.log(err);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.noteWrapper}>
         <View style={styles.headerWrapper}>
           <Header label="My Notes" style={styles.title} />
-          <TouchableOpacity>
-            <View style={styles.addWrapper}>
-              <CircleButton name="add-outline" size={28} color={"#090c02"} />
-            </View>
-          </TouchableOpacity>
+          <View style={styles.addWrapper}>
+            <CircleButton
+              name="add-outline"
+              size={28}
+              color={"#090c02"}
+              onPress={() => {
+                setModalVisible(true);
+              }}
+            />
+          </View>
         </View>
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
@@ -27,10 +74,26 @@ const MyNotes = () => {
             {/* Items */}
             <NoteItem text={"Note 1"} />
             <NoteItem text={"Note 2"} />
-            <NoteItem text={"Note 3"} />
-            <NoteItem text={"Note 4"} />
           </View>
         </ScrollView>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <NoteModal
+            onClose={() => {
+              setModalVisible(!modalVisible);
+              setNoteItem("");
+            }}
+            textInputValue={noteItem}
+            onChangeText={(text) => setNoteItem(text)}
+            onSave={saveNote}
+          />
+        </Modal>
       </View>
     </View>
   );
@@ -60,5 +123,45 @@ const styles = StyleSheet.create({
   },
   items: {
     marginTop: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 15,
+    padding: 35,
+    shadowColor: "#090c02",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  input: {
+    fontSize: 16,
+  },
+  buttonWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  button: {
+    width: "40%",
+    marginVertical: 5,
+    backgroundColor: "#e34439",
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
