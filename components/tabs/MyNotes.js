@@ -148,8 +148,7 @@ const MyNotes = () => {
   };
 
   // FOR LONG PRESS FEATURE - SHARE NOTE TO SEND AS SMS OR EMAIL
-  const shareNote = (id, text) => {
-    setNoteId(id);
+  const shareNote = (text) => {
     setNoteItem(text);
     setDataExists(true);
 
@@ -159,11 +158,11 @@ const MyNotes = () => {
       [
         {
           text: "SMS",
-          onPress: sendSMS,
+          onPress: () => sendSMS(text),
         },
         {
           text: "Email",
-          onPress: sendEmail,
+          onPress: () => sendEmail(text),
         },
       ],
       {
@@ -172,9 +171,9 @@ const MyNotes = () => {
     );
   };
 
-  const sendSMS = async () => {
+  const sendSMS = async (text) => {
     const isAvailable = SMS.isAvailableAsync();
-    let message = `Here's a note sent from MyStuff:\n\n ${noteItem}`;
+    let message = `Here's a note sent from MyStuff:\n\n ${text}`;
 
     try {
       await isAvailable;
@@ -190,11 +189,11 @@ const MyNotes = () => {
     }
   };
 
-  const sendEmail = async () => {
+  const sendEmail = async (text) => {
     const isAvailable = MailComposer.isAvailableAsync();
     let options = {
       subject: "A note has been shared from MyStuff",
-      body: `Here's a note sent to you:\n\n${noteItem}`,
+      body: `Here's a note sent to you:\n\n${text}`,
     };
 
     const compose = MailComposer.composeAsync(options);
@@ -239,7 +238,7 @@ const MyNotes = () => {
                 id={data.item.id}
                 text={data.item.text}
                 onPress={() => selectItem(data.item.id, data.item.text)}
-                onLongPress={() => shareNote(data.item.id, data.item.text)}
+                onLongPress={() => shareNote(data.item.text)}
               />
             )}
           />
