@@ -63,7 +63,7 @@ const LoginScreen = () => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <Header label="Welcome to MyStuff" />
+      <Header label="Welcome to MyStuff" style={{ fontSize: 30 }} />
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Email"

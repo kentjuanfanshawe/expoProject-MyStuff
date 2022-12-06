@@ -4,7 +4,7 @@ import React from "react";
 const Header = ({ label, style }) => {
   return (
     <View>
-      <Text style={[style, styles.title]}>{label}</Text>
+      <Text style={[styles.title, style]}>{label}</Text>
     </View>
   );
 };
