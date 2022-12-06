@@ -2,11 +2,9 @@ import { StyleSheet } from "react-native";
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { auth, firestore } from "../firebase";
 
 // import components
 import MyNotes from "../components/tabs/MyNotes";
-import MyAudio from "../components/tabs/MyAudio";
 import MyProfile from "../components/tabs/MyProfile";
 
 const HomeScreen = () => {
@@ -20,8 +18,6 @@ const HomeScreen = () => {
 
           if (route.name === "My Notes") {
             iconName = focused ? "document" : "document-outline";
-          } else if (route.name === "My Audio") {
-            iconName = focused ? "musical-notes" : "musical-notes-outline";
           } else if (route.name === "My Profile") {
             iconName = focused ? "person-circle" : "person-circle-outline";
           }
@@ -35,7 +31,6 @@ const HomeScreen = () => {
       })}
     >
       <Tab.Screen name="My Notes" component={MyNotes} />
-      <Tab.Screen name="My Audio" component={MyAudio} />
       <Tab.Screen name="My Profile" component={MyProfile} />
     </Tab.Navigator>
   );

@@ -6,13 +6,14 @@ import {
   TextInput,
   Platform,
   TouchableOpacity,
-  KeyboardAvoidingView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { auth, firestore, storage } from "../../firebase";
 import { useNavigation } from "@react-navigation/core";
-import * as ImagePicker from "expo-image-picker";
+
+///// EXPO API USED
 import DateTimePicker from "@react-native-community/datetimepicker";
+import * as ImagePicker from "expo-image-picker";
 
 // components
 import Button from "../buttons/Button";

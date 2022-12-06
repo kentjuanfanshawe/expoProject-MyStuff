@@ -12,6 +12,8 @@ import { useNavigation } from "@react-navigation/core";
 import React, { useEffect, useState } from "react";
 import { auth } from "../firebase";
 
+import Header from "../components/texts/Header";
+
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -61,6 +63,7 @@ const LoginScreen = () => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <Header label="Welcome to MyStuff" />
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Email"

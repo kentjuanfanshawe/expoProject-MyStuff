@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 const NoteItem = (props) => {
   return (
-    <TouchableOpacity onPress={props.onPress}>
+    <TouchableOpacity onPress={props.onPress} onLongPress={props.onLongPress}>
       <View style={styles.item}>
         <Text style={styles.itemText}>{props.text}</Text>
       </View>
