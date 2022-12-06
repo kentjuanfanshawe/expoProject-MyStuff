@@ -11,7 +11,7 @@ import * as MailComposer from "expo-mail-composer";
 import Header from "../texts/Header";
 import NoteItem from "../notes/NoteItem";
 import CircleButton from "../buttons/CircleButton";
-import NoteModal from "../NoteModal";
+import NoteModal from "../modal/NoteModal";
 
 const MyNotes = () => {
   const [modalVisible, setModalVisible] = useState(false);
