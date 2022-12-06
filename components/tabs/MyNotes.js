@@ -4,6 +4,8 @@ import { auth, firestore } from "../../firebase";
 import { query, where, collection, getDocs } from "firebase/firestore";
 
 ///// EXPO API USED
+import * as SMS from "expo-sms";
+import * as MailComposer from "expo-mail-composer";
 
 // components
 import Header from "../texts/Header";
@@ -145,6 +147,71 @@ const MyNotes = () => {
     ]);
   };
 
+  // FOR LONG PRESS FEATURE - SHARE NOTE TO SEND AS SMS OR EMAIL
+  const shareNote = (id, text) => {
+    setNoteId(id);
+    setNoteItem(text);
+    setDataExists(true);
+
+    Alert.alert(
+      "Share Note",
+      "How do you want to share it?",
+      [
+        {
+          text: "SMS",
+          onPress: sendSMS,
+        },
+        {
+          text: "Email",
+          onPress: sendEmail,
+        },
+      ],
+      {
+        cancelable: true,
+      }
+    );
+  };
+
+  const sendSMS = async () => {
+    const isAvailable = SMS.isAvailableAsync();
+    let message = `Here's a note sent from MyStuff:\n\n ${noteItem}`;
+
+    try {
+      await isAvailable;
+      if (isAvailable) {
+        const { result } = await SMS.sendSMSAsync([""], message);
+
+        if (result === "sent") {
+          Alert.alert("Your text has been sent!");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const sendEmail = async () => {
+    const isAvailable = MailComposer.isAvailableAsync();
+    let options = {
+      subject: "A note has been shared from MyStuff",
+      body: `Here's a note sent to you:\n\n${noteItem}`,
+    };
+
+    const compose = MailComposer.composeAsync(options);
+
+    try {
+      await isAvailable;
+      if (isAvailable) {
+        const result = await compose;
+        if (result.status === "sent") {
+          Alert.alert("Your email has been sent successfully");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.noteWrapper}>
@@ -172,7 +239,7 @@ const MyNotes = () => {
                 id={data.item.id}
                 text={data.item.text}
                 onPress={() => selectItem(data.item.id, data.item.text)}
-                onLongPress={() => alert("longpress")}
+                onLongPress={() => shareNote(data.item.id, data.item.text)}
               />
             )}
           />
