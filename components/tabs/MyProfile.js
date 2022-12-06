@@ -6,6 +6,7 @@ import {
   TextInput,
   Platform,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { auth, firestore, storage } from "../../firebase";
@@ -259,9 +260,8 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 40,
     flex: 1,
-    justifyContent: "space-around",
+    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#ddd",
   },
   add: {
     position: "absolute",

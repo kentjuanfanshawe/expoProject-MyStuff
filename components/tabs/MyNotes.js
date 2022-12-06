@@ -1,6 +1,5 @@
-import { StyleSheet, Modal, View, Alert } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
-import React, { useState } from "react";
+import { StyleSheet, Modal, View, Alert, FlatList } from "react-native";
+import React, { useState, useEffect } from "react";
 import { auth, firestore } from "../../firebase";
 import { query, where, collection, getDocs } from "firebase/firestore";
 
@@ -12,10 +11,17 @@ import NoteModal from "../NoteModal";
 
 const MyNotes = () => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [noteModalVisible, setNoteModalVisible] = useState(false);
   const [noteItem, setNoteItem] = useState("");
+  const [noteId, setNoteId] = useState("");
   const [notes, setNotes] = useState([]);
+  const [dataExists, setDataExists] = useState(false);
 
   let userId = auth.currentUser?.uid;
+
+  useEffect(() => {
+    loadNoteList();
+  }, []);
 
   const loadNoteList = async () => {
     const noteRef = query(
@@ -25,15 +31,44 @@ const MyNotes = () => {
 
     try {
       const querySnapshot = await getDocs(noteRef);
-      console.log(querySnapshot);
 
       let noteArray = [];
+      // Clear all data first before loading data from firebase
+      setNotes("");
       querySnapshot.forEach((doc) => {
         let item = doc.data();
         item.id = doc.id;
         noteArray.push(item);
       });
-      console.log(...noteArray);
+      //   console.log(...noteArray);
+
+      setNotes(noteArray);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateNote = async () => {
+    let noteToSave = {
+      text: noteItem,
+      completed: false,
+      userId: userId,
+    };
+
+    const docRef = firestore
+      .collection("users")
+      .doc(userId)
+      .collection("notes")
+      .doc(noteId)
+      .update(noteToSave, { merge: true });
+
+    try {
+      await docRef;
+
+      // load new data
+      loadNoteList();
+      setModalVisible(!modalVisible);
+      setNoteItem("");
     } catch (error) {
       console.log(error);
     }
@@ -54,21 +89,25 @@ const MyNotes = () => {
 
     try {
       await docRef;
-      Alert.alert("Note saved!");
       // copy generated document id for noteItem
       noteToSave.id = docRef.id;
 
-      let updatedNotes = [...notes];
-      updatedNotes.push({ text: noteItem, completed: false, userId: userId });
-
-      // clear modal
-      setNotes(updatedNotes);
+      // load new data
+      loadNoteList();
       setModalVisible(!modalVisible);
       setNoteItem("");
     } catch (err) {
       Alert.alert("Error in saving your note");
       console.log(err);
     }
+  };
+
+  const selectItem = (id, text) => {
+    setNoteId(id);
+    setNoteItem(text);
+    setDataExists(true);
+
+    setModalVisible(true);
   };
 
   return (
@@ -83,21 +122,26 @@ const MyNotes = () => {
               color={"#090c02"}
               onPress={() => {
                 setModalVisible(true);
-                loadNoteList();
+                setDataExists(false);
+                setNoteId("");
               }}
             />
           </View>
         </View>
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.items}>
-            {/* Items */}
-            <NoteItem text={"Note 1"} />
-            <NoteItem text={"Note 2"} />
-          </View>
-        </ScrollView>
+        <View style={styles.items}>
+          {/* Items */}
+          <FlatList
+            data={notes}
+            renderItem={(data) => (
+              <NoteItem
+                id={data.item.id}
+                text={data.item.text}
+                onPress={() => selectItem(data.item.id, data.item.text)}
+              />
+            )}
+          />
+        </View>
+
         <Modal
           animationType="slide"
           transparent={true}
@@ -107,13 +151,18 @@ const MyNotes = () => {
           }}
         >
           <NoteModal
+            id={noteId}
             onClose={() => {
               setModalVisible(!modalVisible);
               setNoteItem("");
             }}
+            label={dataExists === true ? "Update Note" : "New Note"}
             textInputValue={noteItem}
             onChangeText={(text) => setNoteItem(text)}
             onSave={saveNote}
+            onUpdate={updateNote}
+            onDelete={() => alert("delete")}
+            isExists={dataExists}
           />
         </Modal>
       </View>

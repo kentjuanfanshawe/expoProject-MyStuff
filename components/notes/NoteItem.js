@@ -3,13 +3,11 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 const NoteItem = (props) => {
   return (
-    <View style={styles.item}>
-      <View style={styles.itemLeft}>
-        <TouchableOpacity style={styles.square}></TouchableOpacity>
+    <TouchableOpacity onPress={props.onPress}>
+      <View style={styles.item}>
         <Text style={styles.itemText}>{props.text}</Text>
       </View>
-      <View style={styles.circular}></View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

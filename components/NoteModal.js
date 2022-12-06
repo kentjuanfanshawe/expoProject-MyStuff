@@ -6,13 +6,22 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Header from "./texts/Header";
 import Button from "./buttons/Button";
 
-const NoteModal = ({ onClose, textInputValue, onChangeText, onSave }) => {
+const NoteModal = ({
+  label,
+  onClose,
+  textInputValue,
+  onChangeText,
+  onSave,
+  onUpdate,
+  onDelete,
+  isExists,
+}) => {
   return (
     <View style={styles.modalContainer}>
       <View style={styles.modalView}>
         {/* Modal Header */}
         <View style={styles.modalHeader}>
-          <Header label="New Note" style={styles.title} />
+          <Header label={label} style={styles.title} />
           <TouchableOpacity onPress={onClose}>
             <Ionicons name="close-outline" size={28} color={"#090c02"} />
           </TouchableOpacity>
@@ -27,12 +36,20 @@ const NoteModal = ({ onClose, textInputValue, onChangeText, onSave }) => {
           onChangeText={onChangeText}
         />
         {/* Modal Footer */}
-        <View style={styles.buttonWrapper}>
-          <Button label="Save" width={"40%"} onPress={onSave} />
-          {/* <TouchableOpacity style={styles.button} onPress={onDelete}>
-            <Ionicons name="trash" size={24} color={"#fff"} />
-          </TouchableOpacity> */}
-        </View>
+
+        {!isExists && (
+          <View style={styles.buttonWrapper}>
+            <Button label="Save" width={"40%"} onPress={onSave} />
+          </View>
+        )}
+        {isExists && (
+          <View style={styles.buttonWrapper}>
+            <Button label="Update" width={"40%"} onPress={onUpdate} />
+            <TouchableOpacity style={styles.button} onPress={onDelete}>
+              <Ionicons name="trash" size={24} color={"#fff"} />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </View>
   );
